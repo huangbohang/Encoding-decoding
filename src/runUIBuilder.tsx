@@ -2,7 +2,6 @@ import { bitable, UIBuilder } from "@lark-base-open/js-sdk";
 import { encode, decode } from "./Base64.js";
 import { encodeUn, decodeUn } from "./Unicode.js";
 import { encodeAs, decodeAs } from "./ASCII.js";
-const table = await bitable.base.getActiveTable();
 export default async function main(uiBuilder: UIBuilder) {
   let options = [{
     label: "url编码/解码",
@@ -31,7 +30,8 @@ export default async function main(uiBuilder: UIBuilder) {
       form.fieldSelect('field2', { label: '转换完成并需要填充的字段', sourceTable: 'table' }),
     ],
     buttons: ['确认'],
-  }), async ({ values }) => {
+  }), async ({ values  }) => {
+    const table = await bitable.base.getActiveTable();
     let { field1, select1, select2, field2, path } = values;
     let codeMap = {
       url: {
