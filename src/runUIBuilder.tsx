@@ -51,10 +51,23 @@ export default async function main(uiBuilder: UIBuilder) {
         decode: decodeAs
       }
     }
-    const recordIds = await table.getRecordIdList(); // 获取所有记录 id
+    // 分页改造
+    let recordIdList:string[] = []
+    let hasMorePage = false
+    let nextPageToken: number | undefined = undefined
+    do {
+      const { hasMore, pageToken, recordIds } = await table.getRecordIdListByPage({
+          pageToken: nextPageToken,
+          pageSize: 200
+      })
+      nextPageToken = pageToken
+      hasMorePage = hasMore
+      recordIdList = recordIdList.concat(recordIds)
+  } while (hasMorePage)
+
     let contents = [];
-    for (let i = 0; i < recordIds.length; i++) {
-      const recordId = recordIds[i]
+    for (let i = 0; i < recordIdList.length; i++) {
+      const recordId = recordIdList[i]
       const cell = await table.getCellString(field1.id, recordId);
       let content = path ? `${path}${codeMap[select1][select2](cell)}` : codeMap[select1][select2](cell);
       if (cell) {
